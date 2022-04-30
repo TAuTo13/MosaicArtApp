@@ -37,10 +37,10 @@ class MosaicCreator:
     def initialize(self,result_width,asp = (16,9), x_num = 100):
         src_ratio = self.source.w_h_ratio
         self.x_num = x_num
-        self.y_num = math.ceil(x_num * src_ratio)
+        self.y_num = math.ceil((x_num * src_ratio))
 
         parts_width = math.floor(result_width / x_num)
-        parts_height = math.ceil(parts_width * src_ratio)
+        parts_height = math.ceil((parts_width / asp[0])* asp[1])
 
         self.parts_imgs.resize(asp,parts_width,parts_height)
         

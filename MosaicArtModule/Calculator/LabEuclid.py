@@ -11,16 +11,9 @@ class LabEuclid(ImgDistCalculator):
 				pass
 
 		def arrangeParts(self, src_parts: ImgCollection, parts_collection: ImgCollection):
-			print("parts")
-			print(parts_collection.Lab_array)
 			self.flann.build_index(parts_collection.Lab_array)
 
-			print("src")
-			print(src_parts.Lab_array)
 			result , _ = self.flann.nn_index(src_parts.Lab_array,num_neighbors = 5)
-
-			print("res")
-			print(result)
 
 			result_collection = ImgCollection()
 

@@ -1,15 +1,16 @@
 import glob
 import cv2
 import os
+import re
 
 from MosaicArtModule.ImgModule import ImgItem,ImgCollection
 
 class FileManager:
     def loadImgs(self, folderPath):
         if not os.path.exists(folderPath):
-            os.mkdirs(folderPath)
+            os.makedirs(folderPath)
         imgs = ImgCollection()
-        files = glob.glob(os.path.join(folderPath,"*.png"))
+        files = [p for p in glob.glob(os.path.join(folderPath,"*")) if re.search("/*\.(jpeg|jpg|png|bmp|webp)",p)]
 
         for file in files:
             print(file)
