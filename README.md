@@ -1,17 +1,7 @@
 # MosaicArtApp
 Create MosaicArt from parts pictures in folder and an source picture.
 
-# How To Use
-1. Load folder for parts pictures and source picture.
-```
-import MosaicArtModule.FileManager as fm
-fileManager = fm.FileManager()
+![Normal street picture](images/street.jpg "street")
 
-#Parts is loaded as format ImgCollection.
-#Input directoryPath
-parts = fileManager.loadImgs("local/usr/mosaic/parts")
+![Street mosaicArt picture](images/result_pic.png "mosaicArt")
 
-#source is loaded as format ImgItem.
-#Input a source picture path and name.
-src = fileManager.loadImg("local/usr/mosaic/srcImg","source.png")
-```
