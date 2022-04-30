@@ -12,13 +12,10 @@ class ImgItem:
         self.height, self.width, c = self.img.shape
         self.w_h_ratio = self.height / self.width
         self.used = False
-
-    def LabMean(self):
         img_Lab = cv2.cvtColor(self.img, cv2.COLOR_BGR2LAB)
-        img_L, img_a, img_b = cv2.split(img_Lab)
-        self.img_L = np.mean(img_L)
-        self.img_a = np.mean(img_a)
-        self.img_b = np.mean(img_b)
+        l,a,b = cv2.split(img_Lab)
+        self.Lab = [np.mean(l),np.mean(a),np.mean(b)]
+
 
     def resizeAsp(self, asp):
         width = math.ceil(self.width * asp)
@@ -89,16 +86,20 @@ class ImgCollection:
     def __getitem__(self,i):
         return self.imgs[i]
 
+    def toarray(self):
+        array = []
+        for img in self.imgs:
+            array.append(img.Lab)
+            
+        self.Lab_array=np.asarray(array)
+
+        return self.Lab_array
+
     def add(self, item: ImgItem):
         self.imgs.append(item)
         self.count += 1
-
-    def mean(self):
-        for img in self.imgs:
-            img.LabMean()
 
     def resize(self, asp=(16, 9), width = 30, height = 20):    
         for img in self.imgs:
             img.trim(asp)
             img.resize(width,height)
-            img.LabMean()

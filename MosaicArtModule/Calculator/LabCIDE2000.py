@@ -2,8 +2,10 @@ import math
 from MosaicArtModule.ImgModule import ImgItem,ImgCollection
 from MosaicArtModule.Calculator.ImgDistBase import ImgDistCalculator
 
-class LabDistCalculator(ImgDistCalculator):
-    def __init__(self):
+class LabCIDE2000(ImgDistCalculator):
+    def __init__(self,unique:bool):
+        self.unique = unique
+
         self._PI_2 = math.pi * 2
         self._V25_7 = 25 ** 7
         self._D6 = math.radians(6)
@@ -17,8 +19,8 @@ class LabDistCalculator(ImgDistCalculator):
         self._kh = 1
         self._MAX = self._calcDiff(0, 0, 0, 255, 255, 255)
 
-    def calcDist(self, p1:ImgItem, p2:ImgItem):
-        return self._calcDiff(p1.img_L, p1.img_a, p1.img_b, p2.img_L, p2.img_a, p2.img_b)/self._MAX
+    def _calcDist(self, p1:ImgItem, p2:ImgItem):
+        return self._calcDiff(p1.Lab[0], p1.Lab[1], p1.Lab[2], p2.Lab[0], p2.Lab[1], p2.Lab[2])/self._MAX
 
     def _calcDiff(self, L1, a1, b1, L2, a2, b2):
         dld = L2 - L1
@@ -73,23 +75,41 @@ class LabDistCalculator(ImgDistCalculator):
 
         return math.sqrt(de)
 
-    def getNearestImgs(self, p: ImgItem, collection: ImgCollection, unique: bool):
+    def _getNearestImgs(self, p: ImgItem, collection: ImgCollection):
+        min = 999999999999
+        nearest_img = None
+        
+        for img in collection:
+            dist = self._calcDist(p, img)
+            if dist < min:
+                min = dist
+                nearest_img = img
+
+        return nearest_img
+
+    def _getNearestImgsUnique(self, p: ImgItem, collection: ImgCollection):
         min = 999999999999
         nearest_img = None
 
-        if unique:
-            for img in collection:
+        for img in collection:
                 if not img.used:
-                    dist = self.calcDist(p, img)
+                    dist = self._calcDist(p, img)
                     if dist < min:
                         min = dist
                         nearest_img = img
                         img.used = True
-        else:
-            for img in collection:
-                dist = self.calcDist(p, img)
-                if dist < min:
-                    min = dist
-                    nearest_img = img
 
         return nearest_img
+
+    def arrangeParts(self,src_parts:ImgCollection,parts_collection:ImgCollection):
+        result_collection = ImgCollection()
+        if self.unique:
+            for img in src_parts: 
+                item = self._getNearestImgsUnique(img, parts_collection)
+                result_collection.add(item)
+        else:
+            for img in src_parts: 
+                item = self._getNearestImgs(img, parts_collection)
+                result_collection.add(item)
+
+        return result_collection

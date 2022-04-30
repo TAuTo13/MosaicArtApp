@@ -1,3 +1,9 @@
+#Avoid uploading pictures for test
+/parts/
+/save/
+/source/
+
+#For MacOS
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
