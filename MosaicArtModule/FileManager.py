@@ -25,9 +25,10 @@ class FileManager:
         return imgs
 
     def loadImg(self, path, name):
-        if not os.path.exists(name):
-            os.mkdirs(path)
         src_path=os.path.join(path,name)
+        if not os.path.exists(path):
+            print("path "+ path +" does not exist")
+            return
         print(src_path)
 
         try:
@@ -41,7 +42,7 @@ class FileManager:
 
     def saveImg(self, img:ImgItem, path, name="result.png"):
         if not os.path.exists(path):
-            os.mkdirs(path)
+            os.makedirs(path)
         save_path = os.path.join(path,name)
 
         print(save_path)

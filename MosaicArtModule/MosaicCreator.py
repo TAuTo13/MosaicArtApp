@@ -4,14 +4,35 @@ import cv2
 
 from MosaicArtModule.ImgModule import ImgItem,ImgCollection
 from MosaicArtModule.Calculator.ImgDistBase import ImgDistCalculator
+from MosaicArtModule.Calculator.LabCIDE2000 import LabCIDE2000
+from MosaicArtModule.Calculator.LabEuclid import LabEuclid
 
 
 class MosaicCreator:
-    def __init__(self, parts_imgs: ImgCollection, calculator: ImgDistCalculator, unique = False):
+    def __init__(self, parts_imgs: ImgCollection, calcMethod = "" , unique = False):
         self.parts_imgs = parts_imgs
         self.source = None
-        self._dist_calclator = calculator
         self.unique = unique
+
+        if calcMethod == "LabUQ":
+            self._dist_calculator = LabEuclid(unique)
+            print("Calculator LabEuclid has been selected.")
+        elif calcMethod == "CIDE2000":
+            self._dist_calculator = LabCIDE2000(unique)
+            print("Calculator LabCIDE2000 has been selected.")
+        else:
+            self._dist_calculator = LabEuclid(unique)
+
+    def selectCalcMethod(self,calcMethod):
+        if calcMethod == "LabUQ":
+            self._dist_calculator = LabEuclid(self.unique)
+            print("Calculator LabEuclid has been selected.")
+        elif calcMethod == "CIDE2000":
+            self._dist_calculator = LabCIDE2000(self.unique)
+            print("Calculator LabCIDE2000 has been selected.")
+        else:
+            self._dist_calculator = LabEuclid(self.unique)
+        
 
     def initialize(self,result_width,asp = (16,9), x_num = 100):
         src_ratio = self.source.w_h_ratio
@@ -41,10 +62,13 @@ class MosaicCreator:
         return self.mosaic_art_img
 
     def arrangeParts(self):
-        self.m_parts = ImgCollection()
-        for img in self.src_parts: 
-            item = self._dist_calclator.getNearestImgs(img, self.parts_imgs, self.unique)
-            self.m_parts.add(item)
+        if self._dist_calculator is None:
+            return
+
+        self.parts_imgs.toarray()
+        self.src_parts.toarray()
+        
+        self.m_parts = self._dist_calculator.arrangeParts(self.src_parts,self.parts_imgs)
 
         return self.m_parts
 
@@ -52,17 +76,17 @@ class MosaicCreator:
         if self.source is None:
             print("Source is None.Put any Img.")
             return
-        elif self.source is not ImgItem:
+        
+        if type(self.source) is not ImgItem:
             print("Source is not ImgItem Type.")
             return
 
         self.src_parts = self.source.split(self.x_num, self.y_num)
-        self.src_parts.mean()
 
         return self.src_parts
         
 
-    def createMosaicArt(self, result_width,asp=(16, 9), x_num=100):
+    def createMosaicArt(self):
         self.splitSourceParts()
         
         self.arrangeParts()
