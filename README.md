@@ -1,7 +1,7 @@
 # MosaicArtApp
 Create MosaicArt from parts pictures in folder and an source picture.
 
-![Normal street picture](images/street.jpg "street")
+![Normal street picture](imgs/street.jpg "street")
 
-![Street mosaicArt picture](images/result_pic.png "mosaicArt")
+![Street mosaicArt picture](imgs/result_pic.png "mosaicArt")
 
